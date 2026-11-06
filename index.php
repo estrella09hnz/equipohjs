@@ -1,4 +1,5 @@
 <?php
+//esto setendra quemodificar
 $conexion = new mysqli("localhost", "root", "", "equipohjs");
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
