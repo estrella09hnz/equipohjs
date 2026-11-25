@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de materias</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eaf2f8;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1e3c72;
+        }
+
+        .buscador {
+            padding: 12px;
+            width: 70%;
+            max-width: 400px;
+            border: 2px solid #1e3c72;
+            border-radius: 8px;
+            margin: 15px;
+        }
+
+        .contenedor {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .producto {
+            background: white;
+            width: 230px;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px #aaa;
+        }
+
+        .producto img {
+            width: 100%;
+            height: 160px;
+            object-fit: contain;
+        }
+
+        .precio {
+            color: #16803c;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        button {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #2a5298;
+        }
+
+        #carrito {
+            background: white;
+            margin: 40px auto;
+            padding: 20px;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px #aaa;
+        }
+
+        .oculto {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>T ienda de materias </h1>
+
+    <input
+        type="text"
+        id="buscador"
+        class="buscador"
+        placeholder="Buscar un libro..."
+        oninput="buscarProductos()"
+    >
+
+   
+    <div class="contenedor">
+
+        <div class="producto" data-nombre="ingles">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL9exyAQ8OVkPN8GcKK-zLoUeoceq17Wjhoh_WFPbOWw&s=10" alt="Inglés">
+            <h2>Inglés</h2>
+            <p class="precio">$250.00</p>
+            <button onclick="agregarCarrito('Inglés', 100)">
+                Agregar al carrito
+            </button>
+        </div>
+
+        <div class="producto" data-nombre="matematicas">
+            <img src="https://www.libcientifica.com/imagenes/9789709/978970966310.GIF" alt="Matemáticas">
+            <h2>Matemáticas</h2>
+            <p class="precio">$250.00</p>
+            <button onclick="agregarCarrito('Matemáticas', 120)">
+                Agregar al carrito
+            </button>
+        </div>
+
+        <div class="producto" data-nombre="la energia">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe6-Lf7KGU8WPeAqQ8fZ9CLPN7hRQi5EviuDGBMUj_OKmvsU2haBzZHcY&s=10" alt="La energía">
+            <h2>La energía</h2>
+            <p class="precio">$250.00</p>
+            <button onclick="agregarCarrito('La energía', 80)">
+                Agregar al carrito
+            </button>
+        </div>
+
+    </div>
+
+  
+    <div id="carrito">
+
+        <h2>🛒 MI CARRITO</h2>
+
+        <div id="listaCarrito">
+            <p>Tu carrito está vacío.</p>
+        </div>
+
+        <h3 id="total">Total: $0.00</h3>
+
+        <button onclick="vaciarCarrito()">
+            Vaciar carrito
+        </button>
+
+    </div>
+
+    <script>
+
+        let carrito = [];
+
+  
+        function agregarCarrito(nombre, precio) {
+
+            let producto = carrito.find(p => p.nombre === nombre);
+
+            if (producto) {
+                producto.cantidad++;
+            } else {
+                carrito.push({
+                    nombre: nombre,
+                    precio: precio,
+                    cantidad: 1
+                });
+            }
+
+            mostrarCarrito();
+        }
+        function mostrarCarrito() {
+
+            let lista = document.getElementById("listaCarrito");
+
+            lista.innerHTML = "";
+
+            if (carrito.length === 0) {
+                lista.innerHTML = "<p>Tu carrito está vacío.</p>";
+            }
+
+            carrito.forEach((producto, index) => {
+
+                lista.innerHTML += `
+                    <p>
+                        ${producto.nombre} -
+                        $${producto.precio.toFixed(2)}
+                        x ${producto.cantidad}
+
+                        <button onclick="quitarProducto(${index})">
+                            Quitar
+                        </button>
+                    </p>
+                `;
+
+            });
+
+            let total = carrito.reduce(
+                (suma, producto) =>
+                suma + producto.precio * producto.cantidad, 0
+            );
+
+            document.getElementById("total").innerText =
+                "Total: $" + total.toFixed(2);
+        }
+
+    
+        function quitarProducto(index) {
+
+            carrito[index].cantidad--;
+
+            if (carrito[index].cantidad === 0) {
+                carrito.splice(index, 1);
+            }
+
+            mostrarCarrito();
+        }
+
+
+        function vaciarCarrito() {
+
+            carrito = [];
+            mostrarCarrito();
+
+        }
+
+        function buscarProductos() {
+
+            let texto = document.getElementById("buscador")
+                .value.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+
+            let productos = document.querySelectorAll(".producto");
+
+            productos.forEach(producto => {
+
+                let nombre = producto.dataset.nombre
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "");
+
+                if (nombre.includes(texto)) {
+                    producto.classList.remove("oculto");
+                } else {
+                    producto.classList.add("oculto");
+                }
+
+            });
+
+        }
+
+    </script>
+    <script src="carrito.js"></script>
+
+</body>
+</html>
