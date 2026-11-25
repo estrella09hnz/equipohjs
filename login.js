@@ -1,5 +1,5 @@
 const formularioLogin = document.getElementById("loginForm");
-Hola, bienvenidos 
+// Holaaaa
 
 formularioLogin.addEventListener("submit", function(event) {
     event.preventDefault();
